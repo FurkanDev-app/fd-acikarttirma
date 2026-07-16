@@ -1,0 +1,16 @@
+# node
+web/node_modules/
+web/dist/
+web/*.tsbuildinfo
+npm-debug.log*
+yarn-error.log
+
+# editor
+.vscode/
+.idea/
+.DS_Store
+
+# installed dev skills (not part of the resource)
+.agents/
+.claude/skills/
+skills-lock.json

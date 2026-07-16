@@ -1,0 +1,250 @@
+/* fd-acikarttirma NUI - tasarim sistemi (dark, mezat evi / premium)
+   OKLCH renkler, radius <= 16px, kontrast >= 4.5:1, semantik z-index. */
+
+:root {
+  --bg:        oklch(0.17 0.015 265);
+  --surface:   oklch(0.215 0.017 265);
+  --surface-2: oklch(0.255 0.019 265);
+  --border:    oklch(0.33 0.02 265);
+  --border-2:  oklch(0.42 0.02 265);
+
+  --ink:       oklch(0.97 0.005 265);
+  --muted:     oklch(0.77 0.016 265);
+  --faint:     oklch(0.62 0.016 265);
+
+  --gold:      oklch(0.83 0.125 85);
+  --gold-deep: oklch(0.72 0.14 72);
+  --gold-ink:  oklch(0.24 0.05 80);
+
+  --success:   oklch(0.78 0.15 150);
+  --danger:    oklch(0.70 0.19 25);
+  --danger-bg: oklch(0.30 0.07 25);
+
+  --radius:    14px;
+  --radius-sm: 9px;
+  --shadow:    0 12px 40px oklch(0.10 0.02 265 / 0.55);
+
+  --z-base: 1;
+  --z-sticky: 10;
+  --z-overlay: 100;
+  --z-toast: 1000;
+
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body, #root { height: 100%; width: 100%; }
+
+body {
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  color: var(--ink);
+  background: transparent;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+.dui-body { background: var(--bg); }
+.dui-transparent { background: transparent; }
+
+/* ---- menu overlay ---- */
+.overlay {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  background: oklch(0.10 0.02 265 / 0.55);
+  z-index: var(--z-overlay);
+  animation: fade 0.18s var(--ease);
+}
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+
+.panel {
+  width: min(720px, 92vw);
+  max-height: 86vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  animation: rise 0.24s var(--ease);
+}
+@keyframes rise { from { transform: translateY(14px); opacity: 0; } to { transform: none; opacity: 1; } }
+
+.panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface-2);
+}
+.panel-head h1 {
+  font-size: 1.15rem;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.panel-head .gavel { color: var(--gold); font-size: 1.3rem; }
+.panel-head .sub { color: var(--muted); font-size: 0.82rem; font-weight: 450; }
+
+.panel-body {
+  padding: 20px 22px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* ---- badges / meta ---- */
+.badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 4px 10px; border-radius: 999px;
+  font-size: 0.74rem; font-weight: 600; letter-spacing: 0.02em;
+  background: var(--surface-2); color: var(--muted);
+  border: 1px solid var(--border);
+}
+.badge.live { color: var(--gold); border-color: var(--gold-deep); }
+.badge.reg { color: var(--success); }
+
+/* ---- section ---- */
+.section-title {
+  font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--faint); font-weight: 650; margin-bottom: 2px;
+}
+
+/* ---- form ---- */
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label { font-size: 0.82rem; color: var(--muted); font-weight: 500; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+input, select {
+  width: 100%;
+  padding: 11px 13px;
+  background: var(--bg);
+  color: var(--ink);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 0.92rem;
+  font-family: inherit;
+  transition: border-color 0.15s var(--ease), box-shadow 0.15s var(--ease);
+}
+input:focus, select:focus {
+  outline: none;
+  border-color: var(--gold-deep);
+  box-shadow: 0 0 0 3px oklch(0.72 0.14 72 / 0.22);
+}
+input::placeholder { color: var(--faint); }
+
+/* ---- buttons ---- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 11px 18px;
+  border: 1px solid var(--border-2);
+  border-radius: var(--radius-sm);
+  background: var(--surface-2);
+  color: var(--ink);
+  font-size: 0.92rem; font-weight: 600; font-family: inherit;
+  cursor: pointer;
+  transition: transform 0.12s var(--ease), background 0.15s var(--ease), border-color 0.15s var(--ease);
+}
+.btn:hover { background: var(--border); transform: translateY(-1px); }
+.btn:active { transform: translateY(0); }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+.btn.primary {
+  background: var(--gold);
+  color: var(--gold-ink);
+  border-color: var(--gold);
+}
+.btn.primary:hover { background: var(--gold-deep); }
+.btn.danger {
+  background: transparent; color: var(--danger); border-color: var(--danger);
+}
+.btn.danger:hover { background: var(--danger-bg); color: var(--ink); }
+.btn.wide { width: 100%; }
+.btn.ghost { background: transparent; }
+
+.btn-row { display: flex; gap: 10px; flex-wrap: wrap; }
+
+.icon-btn {
+  width: 34px; height: 34px; display: grid; place-items: center;
+  border-radius: var(--radius-sm); border: 1px solid var(--border);
+  background: var(--surface); color: var(--muted); cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+.icon-btn:hover { color: var(--ink); border-color: var(--border-2); }
+
+/* ---- lot cards ---- */
+.lot-list { display: flex; flex-direction: column; gap: 10px; }
+.lot-card {
+  display: flex; align-items: center; gap: 14px;
+  padding: 13px 15px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+.lot-idx {
+  width: 30px; height: 30px; flex: none; display: grid; place-items: center;
+  border-radius: 8px; background: var(--bg); color: var(--gold);
+  font-weight: 700; font-size: 0.9rem;
+}
+.lot-main { flex: 1; min-width: 0; }
+.lot-main .name { font-weight: 600; font-size: 0.95rem; }
+.lot-main .meta { color: var(--muted); font-size: 0.8rem; margin-top: 2px; }
+.lot-type-tag {
+  font-size: 0.72rem; color: var(--faint); font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.04em;
+}
+
+/* ---- live bid view ---- */
+.live-hero {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: linear-gradient(180deg, var(--surface-2), var(--surface));
+  padding: 22px;
+  text-align: center;
+}
+.live-hero .lot-name {
+  font-size: 1.7rem; font-weight: 700; letter-spacing: -0.02em;
+  text-wrap: balance; margin: 6px 0 2px;
+}
+.live-hero .lot-sub { color: var(--muted); font-size: 0.86rem; }
+.price-big {
+  font-size: 3.2rem; font-weight: 800; letter-spacing: -0.03em;
+  color: var(--gold); font-variant-numeric: tabular-nums; line-height: 1.05;
+  margin: 14px 0 4px;
+}
+.price-label { color: var(--faint); font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.08em; }
+.leader-line { color: var(--muted); font-size: 0.9rem; margin-top: 10px; }
+.leader-line b { color: var(--ink); }
+
+.timer {
+  display: inline-flex; align-items: center; gap: 8px;
+  margin-top: 14px; padding: 6px 14px; border-radius: 999px;
+  background: var(--bg); border: 1px solid var(--border);
+  font-variant-numeric: tabular-nums; font-weight: 700; color: var(--ink);
+}
+.timer.urgent { color: var(--danger); border-color: var(--danger); }
+.timer .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); animation: pulse 1s var(--ease) infinite; }
+.timer.urgent .dot { background: var(--danger); }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+.quick-bids { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+
+.hint { color: var(--faint); font-size: 0.82rem; text-align: center; }
+.empty {
+  text-align: center; padding: 30px 10px; color: var(--muted);
+}
+.empty .big { font-size: 2rem; margin-bottom: 8px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .overlay, .panel { animation: none; }
+  .timer .dot { animation: none; }
+  .btn:hover { transform: none; }
+}

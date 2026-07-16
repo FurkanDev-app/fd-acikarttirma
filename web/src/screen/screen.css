@@ -1,0 +1,106 @@
+/* Mezat buyuk ekran DUI (1280x720) */
+
+.screen {
+  width: 100vw;
+  height: 100vh;
+  background:
+    radial-gradient(120% 90% at 50% 0%, oklch(0.26 0.03 265) 0%, var(--bg) 60%);
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+  padding: 48px 64px;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.screen-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.brand {
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  color: var(--gold);
+  font-size: 1.6rem;
+}
+.brand.big { font-size: 3rem; letter-spacing: 0.16em; }
+.lot-count {
+  font-weight: 700;
+  color: var(--muted);
+  font-size: 1.3rem;
+  letter-spacing: 0.05em;
+  font-variant-numeric: tabular-nums;
+}
+
+.screen-mid {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 6px;
+}
+.type-tag {
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+.s-lot-name {
+  font-size: 4.4rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+  line-height: 1.04;
+  margin: 4px 0 18px;
+}
+.s-price {
+  font-size: 7rem;
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  color: var(--gold);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+.s-price .cur { font-size: 3.5rem; vertical-align: super; }
+.s-price-label {
+  margin-top: 10px;
+  font-size: 1.15rem;
+  letter-spacing: 0.2em;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.screen-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.s-leader { font-size: 1.5rem; color: var(--muted); }
+.s-leader b { color: var(--ink); }
+.s-timer {
+  font-size: 2.6rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink);
+  padding: 6px 26px;
+  border-radius: 999px;
+  border: 2px solid var(--border-2);
+}
+.s-timer.urgent { color: var(--danger); border-color: var(--danger); }
+
+/* idle */
+.idle-screen { align-items: center; justify-content: center; text-align: center; gap: 18px; }
+.idle-sub { font-size: 1.6rem; color: var(--muted); }
+
+/* sold */
+.sold-screen { align-items: center; justify-content: center; text-align: center; gap: 14px; }
+.sold-stamp {
+  font-size: 6rem; font-weight: 900; letter-spacing: 0.05em;
+  color: var(--gold); margin-top: 10px;
+}
+.sold-name { font-size: 3rem; font-weight: 700; }
+.sold-info { font-size: 1.8rem; color: var(--muted); }
+.sold-info b { color: var(--ink); }
