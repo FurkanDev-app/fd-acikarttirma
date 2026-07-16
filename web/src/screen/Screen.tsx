@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useDuiEvent, isEnvBrowser } from '../shared/nui'
 import { money, secs, LOT_LABELS } from '../shared/format'
+import { useCountUp, useFlashOnChange, useTimerPct } from '../shared/motion'
 
 interface ScreenData {
   active: boolean
@@ -33,20 +34,21 @@ export default function Screen() {
     if (msg.data) setData(msg.data)
   })
 
-  useEffect(() => {
-    if (sold) setData((d) => ({ ...d }))
-  }, [sold])
+  const value = data.hasBid ? data.highBid ?? 0 : data.startPrice ?? 0
+  const shown = useCountUp(value)
+  const flash = useFlashOnChange(value)
+  const pct = useTimerPct(data.index, data.timeLeft)
+  const urgent = (data.timeLeft ?? 99) <= 10
 
   if (sold) {
     return (
       <div className="screen sold-screen">
+        <div className="spotlight" />
         <div className="brand">⚖ MEZAT</div>
-        <div className="sold-stamp">{sold.winnerName ? 'SATILDI' : 'SATILMADI'}</div>
+        <div className={`sold-stamp ${sold.winnerName ? '' : 'miss'}`}>{sold.winnerName ? 'SATILDI' : 'SATILMADI'}</div>
         <div className="sold-name">{sold.label}</div>
         {sold.winnerName ? (
-          <div className="sold-info">
-            <b>{sold.winnerName}</b> — {money(sold.price)} $
-          </div>
+          <div className="sold-info"><b>{sold.winnerName}</b> — {money(sold.price)} $</div>
         ) : (
           <div className="sold-info">Teklif alınamadı</div>
         )}
@@ -57,26 +59,25 @@ export default function Screen() {
   if (!data.active) {
     return (
       <div className="screen idle-screen">
+        <div className="spotlight" />
         <div className="brand big">⚖ MEZAT EVİ</div>
         <div className="idle-sub">Bir sonraki lot birazdan başlıyor…</div>
       </div>
     )
   }
 
-  const price = data.hasBid ? data.highBid : data.startPrice
-  const urgent = (data.timeLeft ?? 99) <= 10
-
   return (
     <div className="screen">
+      <div className="spotlight" />
       <div className="screen-top">
         <div className="brand">⚖ MEZAT</div>
         <div className="lot-count">LOT {data.index} / {data.total}</div>
       </div>
 
-      <div className="screen-mid">
+      <div className="screen-mid" key={data.index}>
         <div className="type-tag">{LOT_LABELS[data.type ?? ''] ?? data.type}</div>
         <h1 className="s-lot-name">{data.label}</h1>
-        <div className="s-price">{money(price)} <span className="cur">$</span></div>
+        <div className={`s-price ${flash ? 'flash' : ''}`}>{money(shown)} <span className="cur">$</span></div>
         <div className="s-price-label">{data.hasBid ? 'GÜNCEL TEKLİF' : 'BAŞLANGIÇ FİYATI'}</div>
       </div>
 
@@ -85,6 +86,10 @@ export default function Screen() {
           {data.hasBid ? <>En yüksek: <b>{data.leader}</b></> : 'Henüz teklif yok'}
         </div>
         <div className={`s-timer ${urgent ? 'urgent' : ''}`}>{secs(data.timeLeft)}</div>
+      </div>
+
+      <div className="s-progress">
+        <div className={`s-progress-fill ${urgent ? 'urgent' : ''}`} style={{ width: `${pct}%` }} />
       </div>
     </div>
   )

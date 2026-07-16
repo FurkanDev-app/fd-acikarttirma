@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { fetchNui } from '../shared/nui'
 import type { AuctionState, LotType, LotView, CallResult } from '../shared/types'
-import { money, secs, LOT_LABELS } from '../shared/format'
+import { money, LOT_LABELS } from '../shared/format'
+import LiveHero from './LiveHero'
 
 interface Props {
   state: AuctionState
@@ -204,24 +205,9 @@ function LiveControl({ state, lot, refresh, notify }: { state: AuctionState; lot
     const res = await fetchNui<CallResult>('closeAuction')
     if (res?.ok) { notify('Mezat kapatıldı', true); refresh() }
   }
-  const urgent = (lot?.timeLeft ?? 99) <= 10
-
   return (
     <>
-      <div className="live-hero">
-        {lot ? (
-          <>
-            <div className="lot-sub">Lot {lot.index} / {lot.total} · {LOT_LABELS[lot.type]}</div>
-            <div className="lot-name">{lot.label}</div>
-            <div className="price-big">{money(lot.hasBid ? lot.highBid : lot.startPrice)} $</div>
-            <div className="price-label">{lot.hasBid ? 'Güncel Teklif' : 'Başlangıç Fiyatı'}</div>
-            {lot.hasBid && <div className="leader-line">Lider: <b>{lot.highBidderName}</b></div>}
-            <div className={`timer ${urgent ? 'urgent' : ''}`}><span className="dot" />{secs(lot.timeLeft)}</div>
-          </>
-        ) : (
-          <div className="hint">Aktif lot yok</div>
-        )}
-      </div>
+      {lot ? <LiveHero lot={lot} /> : <div className="live-hero"><div className="hint">Aktif lot yok</div></div>}
       <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
         <span className="badge">👤 {state.participants ?? 0} katılımcı</span>
       </div>

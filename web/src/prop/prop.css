@@ -19,7 +19,11 @@
   background: oklch(0.20 0.02 265);
   border: 10px solid var(--gold);
   border-radius: 24px;
-  box-shadow: inset 0 0 0 4px oklch(0.16 0.02 265);
+  box-shadow: inset 0 0 0 4px oklch(0.16 0.02 265), 0 0 20px oklch(0.83 0.13 85 / 0.25);
+  transition: box-shadow 0.3s var(--ease);
+}
+.sign-inner.lit {
+  box-shadow: inset 0 0 0 4px oklch(0.16 0.02 265), 0 0 55px oklch(0.83 0.13 85 / 0.7);
 }
 
 .sign-cur {

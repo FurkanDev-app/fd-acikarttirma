@@ -243,8 +243,102 @@ input::placeholder { color: var(--faint); }
 }
 .empty .big { font-size: 2rem; margin-bottom: 8px; }
 
+/* ============================================================
+   ANIMASYON / EFEKT KATMANI
+   ============================================================ */
+
+/* fiyat degisince flash + altin glow */
+.price-big.flash, .s-price.flash, .sign-amount.flash {
+  animation: priceFlash 0.7s var(--ease);
+}
+@keyframes priceFlash {
+  0%   { transform: scale(1); text-shadow: 0 0 0 transparent; }
+  28%  { transform: scale(1.08); text-shadow: 0 0 26px oklch(0.83 0.13 85 / 0.85); color: oklch(0.92 0.13 92); }
+  100% { transform: scale(1); text-shadow: 0 0 0 transparent; }
+}
+
+/* fiyat sabit hafif isilti */
+.price-big { text-shadow: 0 0 22px oklch(0.83 0.13 85 / 0.18); }
+
+/* dairesel sure halkasi (conic) */
+.ring {
+  --pct: 100;
+  position: relative;
+  width: 74px; height: 74px; flex: none;
+  border-radius: 50%;
+  display: grid; place-items: center;
+  background:
+    radial-gradient(closest-side, var(--surface) 70%, transparent 71%),
+    conic-gradient(var(--gold) calc(var(--pct) * 1%), oklch(0.32 0.02 265) 0);
+  transition: background 0.9s linear;
+}
+.ring.urgent {
+  background:
+    radial-gradient(closest-side, var(--surface) 70%, transparent 71%),
+    conic-gradient(var(--danger) calc(var(--pct) * 1%), oklch(0.30 0.05 25) 0);
+  animation: ringPulse 1s var(--ease) infinite;
+}
+.ring .ring-val { font-weight: 800; font-variant-numeric: tabular-nums; font-size: 1.15rem; }
+.ring.urgent .ring-val { color: var(--danger); }
+@keyframes ringPulse {
+  0%,100% { filter: drop-shadow(0 0 0 transparent); }
+  50%     { filter: drop-shadow(0 0 12px oklch(0.70 0.19 25 / 0.7)); }
+}
+
+/* lider (teklif sizin) glow cercevesi */
+.live-hero.mine {
+  border-color: var(--gold);
+  box-shadow: 0 0 0 1px var(--gold), 0 0 34px oklch(0.83 0.13 85 / 0.28);
+  animation: mineGlow 2.4s var(--ease) infinite;
+}
+@keyframes mineGlow {
+  0%,100% { box-shadow: 0 0 0 1px var(--gold), 0 0 24px oklch(0.83 0.13 85 / 0.20); }
+  50%     { box-shadow: 0 0 0 1px var(--gold), 0 0 40px oklch(0.83 0.13 85 / 0.42); }
+}
+.mine-tag {
+  display: inline-block; margin-top: 10px;
+  color: var(--gold-ink); background: var(--gold);
+  padding: 3px 12px; border-radius: 999px; font-size: 0.76rem; font-weight: 700;
+}
+
+/* son teklifler akisi */
+.feed { display: flex; flex-direction: column; gap: 7px; }
+.feed-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 9px 13px; border-radius: var(--radius-sm);
+  background: var(--surface-2); border: 1px solid var(--border);
+  animation: feedIn 0.4s var(--ease);
+}
+.feed-row:first-child { border-color: var(--gold-deep); }
+.feed-row .fr-name { color: var(--ink); font-weight: 600; font-size: 0.9rem; }
+.feed-row .fr-amt { color: var(--gold); font-weight: 700; font-variant-numeric: tabular-nums; }
+@keyframes feedIn {
+  from { transform: translateY(-8px); opacity: 0; }
+  to   { transform: none; opacity: 1; }
+}
+
+/* primary buton hover glow + press */
+.btn.primary { position: relative; }
+.btn.primary:hover { box-shadow: 0 6px 22px oklch(0.72 0.14 72 / 0.4); }
+.btn:active { transform: scale(0.97); }
+
+/* giris stagger */
+.stagger > * { opacity: 0; animation: staggerIn 0.5s var(--ease) forwards; }
+.stagger > *:nth-child(1) { animation-delay: 0.03s; }
+.stagger > *:nth-child(2) { animation-delay: 0.09s; }
+.stagger > *:nth-child(3) { animation-delay: 0.15s; }
+.stagger > *:nth-child(4) { animation-delay: 0.21s; }
+.stagger > *:nth-child(5) { animation-delay: 0.27s; }
+.stagger > *:nth-child(6) { animation-delay: 0.33s; }
+@keyframes staggerIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .overlay, .panel { animation: none; }
-  .timer .dot { animation: none; }
-  .btn:hover { transform: none; }
+  .overlay, .panel, .feed-row, .stagger > * { animation: none; }
+  .stagger > * { opacity: 1; transform: none; }
+  .timer .dot, .ring.urgent, .live-hero.mine { animation: none; }
+  .price-big.flash, .s-price.flash, .sign-amount.flash { animation: none; }
+  .btn:hover, .btn:active { transform: none; }
 }

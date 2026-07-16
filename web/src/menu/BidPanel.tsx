@@ -1,7 +1,9 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { fetchNui } from '../shared/nui'
 import type { AuctionState, LotView, CallResult } from '../shared/types'
-import { money, secs, LOT_LABELS } from '../shared/format'
+import { money } from '../shared/format'
+import { useBidFeed } from '../shared/motion'
+import LiveHero from './LiveHero'
 
 interface Props {
   state: AuctionState
@@ -12,6 +14,14 @@ interface Props {
 export default function BidPanel({ state, lot, notify }: Props) {
   const [custom, setCustom] = useState('')
   const [auto, setAuto] = useState('')
+  const [mine, setMine] = useState(false)
+
+  const feed = useBidFeed(lot?.index, lot?.hasBid, lot?.highBid, lot?.highBidderName)
+
+  // lider degisince "sizin" durumunu guncelle (teklif sonucu leader alanindan gelir)
+  useEffect(() => {
+    if (!lot?.hasBid) setMine(false)
+  }, [lot?.index, lot?.hasBid])
 
   if (state.state !== 'live' || !lot || !lot.running) {
     return (
@@ -24,20 +34,19 @@ export default function BidPanel({ state, lot, notify }: Props) {
 
   const base = lot.hasBid ? lot.highBid : lot.startPrice
   const nextMin = lot.hasBid ? lot.highBid + lot.minIncrement : lot.startPrice
-  const urgent = lot.timeLeft <= 10
 
   const bid = async (amount: number) => {
     if (!amount || amount < nextMin) return notify(`En az ${money(nextMin)} $ vermelisiniz`, false)
-    const res = await fetchNui<CallResult>('placeBid', amount)
-    if (res?.ok) { notify(res.leader ? 'En yüksek teklif sizin!' : 'Teklif verildi', true); setCustom('') }
+    const res = await fetchNui<CallResult & { leader?: boolean }>('placeBid', amount)
+    if (res?.ok) { setMine(!!res.leader); notify(res.leader ? 'En yüksek teklif sizin!' : 'Teklif verildi', true); setCustom('') }
     else notify(res?.msg ?? 'Hata', false)
   }
 
   const autoBid = async () => {
     const m = Number(auto)
     if (!m || m < nextMin) return notify(`Otomatik tavan en az ${money(nextMin)} $ olmalı`, false)
-    const res = await fetchNui<CallResult>('placeAutoBid', m)
-    if (res?.ok) { notify('Otomatik teklif ayarlandı', true); setAuto('') }
+    const res = await fetchNui<CallResult & { leader?: boolean }>('placeAutoBid', m)
+    if (res?.ok) { setMine(!!res.leader); notify('Otomatik teklif ayarlandı', true); setAuto('') }
     else notify(res?.msg ?? 'Hata', false)
   }
 
@@ -50,15 +59,8 @@ export default function BidPanel({ state, lot, notify }: Props) {
   const quick = [lot.minIncrement, lot.minIncrement * 5, lot.minIncrement * 10]
 
   return (
-    <>
-      <div className="live-hero">
-        <div className="lot-sub">Lot {lot.index} / {lot.total} · {LOT_LABELS[lot.type]}</div>
-        <div className="lot-name">{lot.label}</div>
-        <div className="price-big">{money(base)} $</div>
-        <div className="price-label">{lot.hasBid ? 'Güncel Teklif' : 'Başlangıç Fiyatı'}</div>
-        {lot.hasBid && <div className="leader-line">Lider: <b>{lot.highBidderName}</b></div>}
-        <div className={`timer ${urgent ? 'urgent' : ''}`}><span className="dot" />{secs(lot.timeLeft)}</div>
-      </div>
+    <div className="stagger" style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+      <LiveHero lot={lot} mine={mine} />
 
       <div>
         <div className="section-title">Hızlı Teklif</div>
@@ -95,7 +97,21 @@ export default function BidPanel({ state, lot, notify }: Props) {
         </button>
       ) : null}
 
+      {feed.length > 0 && (
+        <div>
+          <div className="section-title">Son Teklifler</div>
+          <div className="feed" style={{ marginTop: 10 }}>
+            {feed.map((f) => (
+              <div className="feed-row" key={f.id}>
+                <span className="fr-name">{f.name}</span>
+                <span className="fr-amt">{money(f.amount)} $</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="hint">Teklif verdiğinizde tutar bankanızdan bloke edilir; geçilirseniz iade edilir.</div>
-    </>
+    </div>
   )
 }
